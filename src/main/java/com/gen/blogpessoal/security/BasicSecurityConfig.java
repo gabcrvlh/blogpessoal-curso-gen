@@ -18,6 +18,7 @@ public class BasicSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
+
         return new BCryptPasswordEncoder();
     }
 
@@ -45,5 +46,4 @@ public class BasicSecurityConfig {
 
         return http.build();
     }
-
 }

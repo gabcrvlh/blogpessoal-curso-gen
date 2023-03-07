@@ -20,7 +20,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Optional<Usuario> cadastrarUsuario(Usuario usuario){
+    public Optional<Usuario> cadastrarUsuario(Usuario usuario) {
         if (usuarioRepository.findByUsuario(usuario.getUsuario()).isPresent())
             return Optional.empty();
 
@@ -29,9 +29,9 @@ public class UsuarioService {
         return Optional.of(usuarioRepository.save(usuario));
     }
 
-    public Optional<Usuario> atualizarUsuario(Usuario usuario){
+    public Optional<Usuario> atualizarUsuario(Usuario usuario) {
 
-        if (usuarioRepository.findById(usuario.getId()).isPresent()){
+        if (usuarioRepository.findById(usuario.getId()).isPresent()) {
             Optional<Usuario> buscaUsuario = usuarioRepository.findByUsuario(usuario.getUsuario());
 
             if ((buscaUsuario.isPresent()) && (buscaUsuario.get().getId() != usuario.getId()))
@@ -46,18 +46,17 @@ public class UsuarioService {
         return Optional.empty();
     }
 
-    public Optional<UsuarioLogin> autenticarUsuario(Optional<UsuarioLogin> usuarioLogin){
+    public Optional<UsuarioLogin> autenticarUsuario(Optional<UsuarioLogin> usuarioLogin) {
         Optional<Usuario> usuario = usuarioRepository.findByUsuario(usuarioLogin.get().getUsuario());
 
-        if (usuario.isPresent()){
-            if (compararSenhas(usuarioLogin.get().getSenha(), usuario.get().getSenha())){
+        if (usuario.isPresent()) {
+            if (compararSenhas(usuarioLogin.get().getSenha(), usuario.get().getSenha())) {
 
                 usuarioLogin.get().setId(usuario.get().getId());
                 usuarioLogin.get().setNome(usuario.get().getNome());
                 usuarioLogin.get().setFoto(usuario.get().getFoto());
                 usuarioLogin.get().setSenha(usuario.get().getSenha());
-                usuarioLogin.get().setToken(gerarBasicToken(usuarioLogin.get().getUsuario(),
-                                                            usuarioLogin.get().getSenha()));
+                usuarioLogin.get().setToken(gerarBasicToken(usuarioLogin.get().getUsuario(), usuarioLogin.get().getSenha()));
 
                 return usuarioLogin;
             }
@@ -66,19 +65,19 @@ public class UsuarioService {
         return Optional.empty();
     }
 
-    private String criptografarSenha(String senha){
+    private String criptografarSenha(String senha) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         return encoder.encode(senha);
     }
 
-    private boolean compararSenhas(String senhaDigitada, String senhaBanco){
+    private boolean compararSenhas(String senhaDigitada, String senhaBanco) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         return encoder.matches(senhaDigitada, senhaBanco);
     }
 
-    private String gerarBasicToken(String usuario, String senha){
+    private String gerarBasicToken(String usuario, String senha) {
         String token = usuario + ":" + senha;
         byte[] tokenBase64 = Base64.encodeBase64(token.getBytes(Charset.forName("US-ASCII")));
         return "Basic " + new String(tokenBase64);
